@@ -90,19 +90,19 @@ $$
 \xrightarrow{\ S_\psi\ }z_i.
 $$
 
-Let $d$ denote `hidden_dim`, $p$ denote `embedding_dim`, and $F$ denote `node_dim`. Node states have dimension $d$; both explanation embeddings and hypothesis-space embeddings have dimension $p$. Unless specified otherwise, each MLP is $\operatorname{Linear}\rightarrow\operatorname{GELU}\rightarrow\operatorname{Linear}$ with hidden width $d$.
+Let $d$ denote `hidden_dim`, $p$ denote `embedding_dim`, and $F$ denote `node_dim`. Node states have dimension $d$; both explanation embeddings and hypothesis-space embeddings have dimension $p$. Unless specified otherwise, each MLP is $\mathrm{Linear}\rightarrow\mathrm{GELU}\rightarrow\mathrm{Linear}$ with hidden width $d$.
 
 ### 2.1 Recursive bottom-up graph encoder
 
-For node $v$, let $\operatorname{Ch}(v)=\{u:(v,u)\in E\}$. The encoder computes
+For node $v$, let $\mathrm{Ch}(v)=\{u:(v,u)\in E\}$. The encoder computes
 
 $$
 a_v=W_xx_v+b_x\in\mathbb R^d,
 $$
 
 $$
-c_v=\sum_{u\in\operatorname{Ch}(v)}\phi_\theta(h_u),\qquad
-h_v=\operatorname{GRUCell}_\theta(a_v,c_v)\in\mathbb R^d,
+c_v=\sum_{u\in\mathrm{Ch}(v)}\phi_\theta(h_u),\qquad
+h_v=\mathrm{GRUCell}_\theta(a_v,c_v)\in\mathbb R^d,
 $$
 
 where $\phi_\theta:\mathbb R^d\rightarrow\mathbb R^d$ is the child-message MLP and $c_v=0$ at leaves. In the PyTorch call, $a_v$ is the GRU input and $c_v$ is its hidden-state argument. Parameters are shared across nodes, heights, and explanations.
@@ -201,7 +201,7 @@ m_v^{\mathrm{out},\ell}=\sum_{u:(v,u)\in E}W_{\mathrm{out}}^\ell h_u^\ell,
 $$
 
 $$
-h_v^{\ell+1}=\operatorname{LayerNorm}\left(
+h_v^{\ell+1}=\mathrm{LayerNorm}\left(
  h_v^\ell+U_\ell(h_v^\ell\Vert m_v^{\mathrm{in},\ell}\Vert m_v^{\mathrm{out},\ell})
 \right).
 $$
@@ -410,13 +410,13 @@ $$
 If $r_q$ is the rank of the first relevant gallery record, the reported ranking metrics are
 
 $$
-\operatorname{Hit@K}=\frac{1}{|\mathcal Q_+|}\sum_{q\in\mathcal Q_+}\mathbf 1[r_q\le K],
+\mathrm{Hit@K}=\frac{1}{|\mathcal Q_+|}\sum_{q\in\mathcal Q_+}\mathbf 1[r_q\le K],
 \qquad
-\operatorname{MRR}=\frac{1}{|\mathcal Q_+|}\sum_{q\in\mathcal Q_+}\frac{1}{r_q},
+\mathrm{MRR}=\frac{1}{|\mathcal Q_+|}\sum_{q\in\mathcal Q_+}\frac{1}{r_q},
 $$
 
 $$
-\operatorname{Coverage}=\frac{|\mathcal Q_+|}{|\mathcal Q|}.
+\mathrm{Coverage}=\frac{|\mathcal Q_+|}{|\mathcal Q|}.
 $$
 
 The evaluator reports Hit@1 and Hit@5. Training also logs the mean coordinate-wise standard deviation of gallery embeddings as a representation-variation diagnostic; this statistic alone cannot establish absence of collapse.
@@ -445,10 +445,10 @@ For downstream RAG, retrieve by vector similarity, fetch the corresponding expla
 Entropy-reduction weighting is a research extension, not an implemented estimator. Let $C$ denote the uncertain causal explanation, $D$ the available evidence, $q$ a diagnostic query or test, and $Y$ its outcome. Expected information gain is
 
 $$
-\operatorname{IG}(q\mid D)=H(C\mid D)-\mathbb E_{Y\mid D,q}[H(C\mid D,Y,q)].
+\mathrm{IG}(q\mid D)=H(C\mid D)-\mathbb E_{Y\mid D,q}[H(C\mid D,Y,q)].
 $$
 
-Assigning this utility to hypothesis $k$ requires an associated query $q_k$ or another explicitly defined evidence-acquisition operation. One candidate weighting is $\alpha_k\propto\exp(\lambda\operatorname{IG}(q_k\mid D))$, with $\lambda\ge0$. Greater expected entropy reduction would increase pooling weight.
+Assigning this utility to hypothesis $k$ requires an associated query $q_k$ or another explicitly defined evidence-acquisition operation. One candidate weighting is $\alpha_k\propto\exp(\lambda\mathrm{IG}(q_k\mid D))$, with $\lambda\ge0$. Greater expected entropy reduction would increase pooling weight.
 
 This weights diagnostic utility, which differs from the probability that a hypothesis is correct. It needs a probabilistic outcome model, must use only evidence available at retrieval time, and may change the meaning of similarity. Weighted DeepSets can consume supplied weights but does not learn or guarantee entropy reduction by itself.
 
